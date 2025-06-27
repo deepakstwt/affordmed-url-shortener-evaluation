@@ -1,9 +1,12 @@
 const { nanoid } = require("nanoid");
 
 const urls = {};
+const DEFAULT_VALIDITY = parseInt(process.env.DEFAULT_VALIDITY_MINUTES) || 30;
+const BASE_URL = process.env.BASE_URL || 'http://localhost:8080';
+
 exports.createShortUrl = async (req, res) => {
   try {
-    const { url, validity = 30, shortcode } = req.body;
+    const { url, validity = DEFAULT_VALIDITY, shortcode } = req.body;
 
     if (!url || typeof url !== "string") {
       return res.status(400).json({ error: "Invalid or missing URL" });
@@ -26,7 +29,7 @@ exports.createShortUrl = async (req, res) => {
     };
 
     return res.status(201).json({
-      shortLink: `http://localhost:8080/${finalCode}`,
+      shortLink: `${BASE_URL}/${finalCode}`,
       expiry: expiry.toISOString(),
     });
   } catch (err) {
